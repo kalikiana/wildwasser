@@ -1,0 +1,8 @@
+[Desktop Entry]
+_Name=Wildwasser
+Exec=qmlscene %U Wildwasser/Main.qml
+Icon=Wildwasser/Wildwasser.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+

@@ -1,0 +1,17 @@
+{
+    "name": "wildwasser.kalikiana",
+    "description": "description of Wildwasser",
+    "architecture": "@CLICK_ARCH@",
+    "title": "Wildwasser",
+    "hooks": {
+        "Wildwasser": {
+            "apparmor": "Wildwasser/Wildwasser.apparmor",
+            "desktop":  "Wildwasser/Wildwasser.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": "Christian Dywan <christian@twotoasts.de>",
+    "framework" : "ubuntu-sdk-15.04.4"
+}
+
+
