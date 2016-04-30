@@ -10,6 +10,7 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.3
+import Qt.labs.settings 1.0
 
 Page {
     id: torrentsPage
@@ -29,6 +30,11 @@ Page {
         onTriggered: torrents.fetch()
     }
 
+    Settings {
+        id: settings
+        property string server: '127.0.0.1:9091'
+    }
+
     UbuntuListView {
         id: torrentsList
         anchors.fill: parent
@@ -36,7 +42,7 @@ Page {
             id: torrents
             // curl -v -H 'X-Transmission-Session-Id: Cjv1cnCuVvy2oR0JdF83uNeduiX2KwNcbxo0JdlP0mmttmMZ' -d '{"arguments":{"fields":["name"]},"method":"torrent-get"}' http://localhost:9091/transmission/rpc
             // https://trac.transmissionbt.com/browser/trunk/extras/rpc-spec.txt
-            source: 'http://127.0.0.1:9091/transmission/rpc'
+            source: 'http://%1/transmission/rpc'.arg(settings.server)
             method: 'PUT'
             query: 'arguments'
             subQuery: 'torrents'
@@ -82,6 +88,16 @@ Page {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
+            }
+            Row {
+                Label {
+                    text: i18n.tr('Server')
+                }
+
+                TextField {
+                    text: settings.server
+                    onTextChanged: settings.server = text
+                }
             }
             visible: torrents.errorString
         }
