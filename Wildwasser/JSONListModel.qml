@@ -11,6 +11,7 @@
 import QtQuick 2.4
 
 ListModel {
+    property bool autoFetch: true
     // URL
     property var headers: {}
     property string method: 'GET'
@@ -20,7 +21,8 @@ ListModel {
         if (!source)
             return
         json = ''
-        fetch()
+        if (autoFetch)
+            fetch()
     }
 
     // String
@@ -29,7 +31,8 @@ ListModel {
         if (!json)
             return
         url = ''
-        fetch()
+        if (autoFetch)
+            fetch()
     }
 
     // Results
@@ -80,6 +83,7 @@ ListModel {
                 responseHeaders = xhr.getAllResponseHeaders()
             }
         }
+        // console.log(JSON.stringify(data))
         xhr.send(JSON.stringify(data))
     }
 
@@ -107,7 +111,9 @@ ListModel {
         clear()
         for (var index in json) {
             var item = json[index]
-            append(item)
+            // Basic types can't be added to the model: rows must be used
+            if (typeof item === 'object')
+                append(item)
         }
         rows = json
         fetched()

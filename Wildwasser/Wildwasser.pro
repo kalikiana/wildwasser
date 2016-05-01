@@ -36,5 +36,6 @@ INSTALLS+=config_files qml_files desktop_file
 DISTFILES += \
     TorrentList.qml \
     JSONListModel.qml \
-    TorrentDetails.qml
+    TorrentDetails.qml \
+    AddTorrent.qml
 
