@@ -91,12 +91,12 @@ Page {
         }
 
         SlotsLayout {
-            Component.onCompleted: urlField.forceActiveFocus()
             mainSlot: TextField {
                 id: urlField
 
                 onTextChanged: confirmAction.enabled = text.indexOf('://') > -1
                 placeholderText: i18n.tr('http://www.example.com/example.torrent')
+                inputMethodHints: Qt.ImhUrlCharactersOnly
             }
             AbstractButton {
                 id: confirmAction
