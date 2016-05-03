@@ -21,11 +21,11 @@ Page {
 
         leadingActionBar {
             actions: [
-            Action {
-                iconName: "back"
-                text: i18n.tr('Cancel')
-                onTriggered: layout.removePages(addPage)
-            }
+                Action {
+                    iconName: "back"
+                    text: i18n.tr('Cancel')
+                    onTriggered: layout.removePages(addPage)
+                }
             ]
         }
 
@@ -44,7 +44,6 @@ Page {
                     }
                 }
             ]
-            //            delegate: pageHeader.delegate
         }
     }
 
@@ -86,37 +85,42 @@ Page {
     }
 
     Column {
-        anchors.centerIn: parent
+        anchors {
+            top: pageHeader.bottom
+            topMargin: units.gu(2)
+        }
+
         width: parent.width
-        height: parent.height / 2
-        spacing: units.gu(4)
         Label {
             horizontalAlignment: Text.AlignHCenter
             font.bold: true
             elide: Text.ElideMiddle
-            width: parent.width
+            width: parent.width - units.gu(4)
+            anchors {
+                left: parent.left
+                leftMargin: units.gu(2)
+            }
             text: {
                 var matches = urlField.text.match(/([?&]title=)([^&]+)/)
                 return matches && matches.length == 3 ? matches[2].toString() : urlField.text
             }
         }
-        Row {
-            spacing: units.gu(2)
-            width: parent.width
+
+        SlotsLayout {
             Label {
                 text: i18n.tr('File')
-                width: parent.width / 3
-                height: urlField.height
-                horizontalAlignment: Text.AlignRight
-                verticalAlignment: Text.AlignVCenter
+                anchors.verticalCenter: urlField.verticalCenter
+                SlotsLayout.position: SlotsLayout.Leading
+                SlotsLayout.overrideVerticalPositioning: true
             }
-            TextField {
+            mainSlot: TextField {
                 id: urlField
-                width: parent.width / 2
+
                 onTextChanged: confirmAction.enabled = text.indexOf('://') > -1
                 placeholderText: i18n.tr('http://www.example.com/example.torrent')
             }
         }
+
         // Error display
         UbuntuShape {
             x: parent.spacing
