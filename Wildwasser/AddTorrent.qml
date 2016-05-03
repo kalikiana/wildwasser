@@ -14,6 +14,7 @@ import Qt.labs.settings 1.0
 
 Page {
     id: addPage
+
     header: PageHeader {
         id: pageHeader
 
@@ -25,23 +26,6 @@ Page {
                     iconName: "back"
                     text: i18n.tr('Cancel')
                     onTriggered: layout.removePages(addPage)
-                }
-            ]
-        }
-
-        trailingActionBar {
-            actions: [
-                Action {
-                    id: confirmAction
-
-                    enabled: false
-                    visible: enabled
-                    iconName: "ok"
-                    text: i18n.tr('Confirm')
-                    onTriggered: {
-                        enabled = false
-                        addTorrent.fetch()
-                    }
                 }
             ]
         }
@@ -89,8 +73,8 @@ Page {
             top: pageHeader.bottom
             topMargin: units.gu(2)
         }
-
         width: parent.width
+
         Label {
             horizontalAlignment: Text.AlignHCenter
             font.bold: true
@@ -107,28 +91,53 @@ Page {
         }
 
         SlotsLayout {
-            Label {
-                text: i18n.tr('File')
-                anchors.verticalCenter: urlField.verticalCenter
-                SlotsLayout.position: SlotsLayout.Leading
-                SlotsLayout.overrideVerticalPositioning: true
-            }
+            Component.onCompleted: urlField.forceActiveFocus()
             mainSlot: TextField {
                 id: urlField
 
                 onTextChanged: confirmAction.enabled = text.indexOf('://') > -1
                 placeholderText: i18n.tr('http://www.example.com/example.torrent')
             }
+            AbstractButton {
+                id: confirmAction
+
+                enabled: false
+                visible: enabled
+                height: urlField.height
+                width:  units.gu(2)
+                SlotsLayout.position: SlotsLayout.Last
+                onTriggered: {
+                    enabled = false
+                    addTorrent.fetch()
+                }
+                Icon {
+                    name: "ok"
+                    width: units.gu(2)
+                    anchors.centerIn: parent
+                }
+            }
         }
 
         // Error display
-        UbuntuShape {
-            x: parent.spacing
-            width: parent.width - parent.spacing * 2
-            color: theme.palette.normal.overlay
-            Label {
-                width: parent.width / 1.5
-                anchors.centerIn: parent
+        SlotsLayout {
+            Icon {
+                color: name === "dialog-warning-symbolic" ? UbuntuColors.red : errorLabel.color
+                name: {
+                    if (!addTorrent.rows)
+                        return "info"
+                    var args = addTorrent.rows.arguments
+                    return addTorrent.errorString ||
+                            (args && args['torrent-duplicate'] ?
+                                 "dialog-warning-symbolic" :
+                                 "ok")
+                }
+                width: units.gu(2)
+                SlotsLayout.position: SlotsLayout.Leading
+            }
+
+            mainSlot: Label {
+                id: errorLabel
+
                 text: {
                     if (!addTorrent.rows)
                         return i18n.tr('Insert the URL of a torrent file')
@@ -138,8 +147,6 @@ Page {
                                  i18n.tr('Torrent %1 is already in the list').arg(args['torrent-duplicate'].name) :
                                  i18n.tr('Torrent %1 was successfully added').arg(args['torrent-added'].name))
                 }
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
             }
         }
