@@ -17,47 +17,34 @@ Page {
     header: PageHeader {
         id: pageHeader
 
-        property Component delegate: Component {
-            AbstractButton {
-                width: label.width + units.gu(4)
-                height: parent.height
-                Rectangle {
-                    anchors.fill: parent
-                    color: theme.palette.normal.base
-                    opacity: 0.1
-                    visible: pressed
-                }
-                Label {
-                    id: label
-                    anchors.centerIn: parent
-                    text: action.text
-                    font.weight: text === i18n.tr("Confirm") ? Font.Normal : Font.Light
-                }
-                action: modelData
-            }
-        }
+        title: i18n.tr("Add torrent")
+
         leadingActionBar {
             actions: [
-                Action {
-                    text: i18n.tr('Cancel')
-                    onTriggered: layout.removePages(addPage)
-                }
+            Action {
+                iconName: "back"
+                text: i18n.tr('Cancel')
+                onTriggered: layout.removePages(addPage)
+            }
             ]
-            delegate: pageHeader.delegate
         }
+
         trailingActionBar {
             actions: [
                 Action {
                     id: confirmAction
-                    text: i18n.tr('Confirm')
+
                     enabled: false
+                    visible: enabled
+                    iconName: "ok"
+                    text: i18n.tr('Confirm')
                     onTriggered: {
                         enabled = false
                         addTorrent.fetch()
                     }
                 }
             ]
-            delegate: pageHeader.delegate
+            //            delegate: pageHeader.delegate
         }
     }
 
@@ -139,13 +126,13 @@ Page {
                 width: parent.width / 1.5
                 anchors.centerIn: parent
                 text: {
-                  if (!addTorrent.rows)
-                      return i18n.tr('Insert the URL of a torrent file')
-                  var args = addTorrent.rows.arguments
-                  return addTorrent.errorString ||
-                  (args && args['torrent-duplicate'] ?
-                   i18n.tr('Torrent %1 is already in the list').arg(args['torrent-duplicate'].name) :
-                   i18n.tr('Torrent %1 was successfully added').arg(args['torrent-added'].name))
+                    if (!addTorrent.rows)
+                        return i18n.tr('Insert the URL of a torrent file')
+                    var args = addTorrent.rows.arguments
+                    return addTorrent.errorString ||
+                            (args && args['torrent-duplicate'] ?
+                                 i18n.tr('Torrent %1 is already in the list').arg(args['torrent-duplicate'].name) :
+                                 i18n.tr('Torrent %1 was successfully added').arg(args['torrent-added'].name))
                 }
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
