@@ -18,7 +18,7 @@ Page {
         id: pageHeader
         title: i18n.tr("Wildwasser")
         flickable: torrentsList
-        leadingActionBar.actions: [
+        trailingActionBar.actions: [
             Action {
                 iconName: 'list-add'
                 onTriggered: pageLayout.addPageToNextColumn(torrentsPage, Qt.resolvedUrl('AddTorrent.qml'))
