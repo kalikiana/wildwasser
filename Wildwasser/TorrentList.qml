@@ -43,7 +43,15 @@ Page {
 
     UbuntuListView {
         id: torrentsList
-        anchors.fill: parent
+
+        anchors {
+            top: errorColumn.visible ? errorColumn.bottom : parent.top
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        clip: true
+
         model: JSONListModel {
             id: torrents
             // curl -v -H 'X-Transmission-Session-Id: Cjv1cnCuVvy2oR0JdF83uNeduiX2KwNcbxo0JdlP0mmttmMZ' -d '{"arguments":{"fields":["name"]},"method":"torrent-get"}' http://localhost:9091/transmission/rpc
@@ -80,32 +88,6 @@ Page {
                 },
                 "method": "torrent-get"
             }
-        }
-
-        // Error display
-        UbuntuShape {
-            anchors.centerIn: parent
-            width: parent.width / 1.5
-            height: parent.height / 3
-            color: theme.palette.normal.overlay
-            Label {
-                anchors.fill: parent
-                text: torrents.errorString
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WordWrap
-            }
-            Row {
-                Label {
-                    text: i18n.tr('Server')
-                }
-
-                TextField {
-                    text: settings.server
-                    onTextChanged: settings.server = text
-                }
-            }
-            visible: torrents.errorString
         }
 
         delegate: ListItem {
@@ -154,6 +136,49 @@ Page {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Error display
+    Column {
+        id: errorColumn
+        visible: torrents.errorString
+        anchors {
+            top: pageHeader.bottom
+            topMargin: units.gu(2)
+        }
+        width: parent.width
+
+        SlotsLayout {
+            Label {
+                text: i18n.tr("Server")
+                anchors.verticalCenter: serverField.verticalCenter
+                SlotsLayout.position: SlotsLayout.Leading
+                SlotsLayout.overrideVerticalPositioning: true
+            }
+
+            mainSlot: TextField {
+                id: serverField
+
+                text: settings.server
+                onTextChanged: settings.server = text
+            }
+        }
+
+        SlotsLayout {
+            Icon {
+                color: UbuntuColors.red
+                name: "dialog-warning-symbolic"
+                width: units.gu(2)
+                SlotsLayout.position: SlotsLayout.Leading
+            }
+
+            mainSlot: Label {
+                id: errorLabel
+
+                text: torrents.errorString
+                wrapMode: Text.WordWrap
             }
         }
     }
