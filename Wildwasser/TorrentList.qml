@@ -21,7 +21,7 @@ Page {
         trailingActionBar.actions: [
             Action {
                 iconName: 'list-add'
-                onTriggered: pageLayout.addPageToCurrentColumn(torrentsPage, Qt.resolvedUrl('AddTorrent.qml'))
+                onTriggered: pageLayout.addPageToNextColumn(torrentsPage, Qt.resolvedUrl('AddTorrent.qml'))
             }
         ]
     }
