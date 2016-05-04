@@ -50,6 +50,7 @@ Page {
             right: parent.right
             bottom: parent.bottom
         }
+        clip: true
 
         model: JSONListModel {
             id: torrents
