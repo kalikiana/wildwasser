@@ -34,7 +34,6 @@ Page {
                 Action {
                     id: confirmAction
                     enabled: false
-                    visible: enabled
                     iconName: "ok"
                     text: i18n.tr('Confirm')
                     onTriggered: {
