@@ -18,7 +18,7 @@ Page {
         id: pageHeader
         title: i18n.tr("Wildwasser")
         flickable: torrentsList
-        leadingActionBar.actions: [
+        trailingActionBar.actions: [
             Action {
                 iconName: 'list-add'
                 onTriggered: pageLayout.addPageToNextColumn(torrentsPage, Qt.resolvedUrl('AddTorrent.qml'))
@@ -82,32 +82,6 @@ Page {
             }
         }
 
-        // Error display
-        UbuntuShape {
-            anchors.centerIn: parent
-            width: parent.width / 1.5
-            height: parent.height / 3
-            color: theme.palette.normal.overlay
-            Label {
-                anchors.fill: parent
-                text: torrents.errorString
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WordWrap
-            }
-            Row {
-                Label {
-                    text: i18n.tr('Server')
-                }
-
-                TextField {
-                    text: settings.server
-                    onTextChanged: settings.server = text
-                }
-            }
-            visible: torrents.errorString
-        }
-
         delegate: ListItem {
             function size(fraction) {
                 if (fraction > Math.pow(10, 9))
@@ -154,6 +128,48 @@ Page {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Error display
+    Column {
+        visible: torrents.errorString
+        anchors {
+            top: pageHeader.bottom
+            topMargin: units.gu(2)
+        }
+        width: parent.width
+
+        SlotsLayout {
+            Label {
+                text: i18n.tr("Server")
+                anchors.verticalCenter: serverField.verticalCenter
+                SlotsLayout.position: SlotsLayout.Leading
+                SlotsLayout.overrideVerticalPositioning: true
+            }
+
+            mainSlot: TextField {
+                id: serverField
+
+                text: settings.server
+                onTextChanged: settings.server = text
+            }
+        }
+
+        SlotsLayout {
+            Icon {
+                color: UbuntuColors.red
+                name: "dialog-warning-symbolic"
+                width: units.gu(2)
+                SlotsLayout.position: SlotsLayout.Leading
+            }
+
+            mainSlot: Label {
+                id: errorLabel
+
+                text: torrents.errorString
+                wrapMode: Text.WordWrap
             }
         }
     }

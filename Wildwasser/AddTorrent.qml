@@ -14,50 +14,35 @@ import Qt.labs.settings 1.0
 
 Page {
     id: addPage
+
     header: PageHeader {
         id: pageHeader
 
-        property Component delegate: Component {
-            AbstractButton {
-                width: label.width + units.gu(4)
-                height: parent.height
-                Rectangle {
-                    anchors.fill: parent
-                    color: theme.palette.normal.base
-                    opacity: 0.1
-                    visible: pressed
-                }
-                Label {
-                    id: label
-                    anchors.centerIn: parent
-                    text: action.text
-                    font.weight: text === i18n.tr("Confirm") ? Font.Normal : Font.Light
-                }
-                action: modelData
-            }
-        }
+        title: i18n.tr("Add torrent")
+
         leadingActionBar {
             actions: [
                 Action {
+                    iconName: "close"
                     text: i18n.tr('Cancel')
                     onTriggered: layout.removePages(addPage)
                 }
             ]
-            delegate: pageHeader.delegate
         }
         trailingActionBar {
             actions: [
                 Action {
                     id: confirmAction
-                    text: i18n.tr('Confirm')
                     enabled: false
+                    visible: enabled
+                    iconName: "ok"
+                    text: i18n.tr('Confirm')
                     onTriggered: {
                         enabled = false
                         addTorrent.fetch()
                     }
                 }
             ]
-            delegate: pageHeader.delegate
         }
     }
 
@@ -99,56 +84,73 @@ Page {
     }
 
     Column {
-        anchors.centerIn: parent
+        anchors {
+            top: pageHeader.bottom
+            topMargin: units.gu(2)
+        }
         width: parent.width
-        height: parent.height / 2
-        spacing: units.gu(4)
+
         Label {
             horizontalAlignment: Text.AlignHCenter
             font.bold: true
             elide: Text.ElideMiddle
-            width: parent.width
+            width: parent.width - units.gu(4)
+            anchors {
+                left: parent.left
+                leftMargin: units.gu(2)
+            }
             text: {
                 var matches = urlField.text.match(/([?&]title=)([^&]+)/)
                 return matches && matches.length == 3 ? matches[2].toString() : urlField.text
             }
         }
-        Row {
-            spacing: units.gu(2)
-            width: parent.width
+
+        SlotsLayout {
             Label {
-                text: i18n.tr('File')
-                width: parent.width / 3
-                height: urlField.height
-                horizontalAlignment: Text.AlignRight
-                verticalAlignment: Text.AlignVCenter
+                text: i18n.tr("File")
+                anchors.verticalCenter: urlField.verticalCenter
+                SlotsLayout.position: SlotsLayout.Leading
+                SlotsLayout.overrideVerticalPositioning: true
             }
-            TextField {
+
+            mainSlot: TextField {
                 id: urlField
-                width: parent.width / 2
+
                 onTextChanged: confirmAction.enabled = text.indexOf('://') > -1
                 placeholderText: i18n.tr('http://www.example.com/example.torrent')
+                inputMethodHints: Qt.ImhUrlCharactersOnly
             }
         }
+
         // Error display
-        UbuntuShape {
-            x: parent.spacing
-            width: parent.width - parent.spacing * 2
-            color: theme.palette.normal.overlay
-            Label {
-                width: parent.width / 1.5
-                anchors.centerIn: parent
-                text: {
-                  if (!addTorrent.rows)
-                      return i18n.tr('Insert the URL of a torrent file')
-                  var args = addTorrent.rows.arguments
-                  return addTorrent.errorString ||
-                  (args && args['torrent-duplicate'] ?
-                   i18n.tr('Torrent %1 is already in the list').arg(args['torrent-duplicate'].name) :
-                   i18n.tr('Torrent %1 was successfully added').arg(args['torrent-added'].name))
+        SlotsLayout {
+            Icon {
+                color: name === "dialog-warning-symbolic" ? UbuntuColors.red : errorLabel.color
+                name: {
+                    if (!addTorrent.rows)
+                        return "info"
+                    var args = addTorrent.rows.arguments
+                    return addTorrent.errorString ||
+                            (args && args['torrent-duplicate'] ?
+                                 "dialog-warning-symbolic" :
+                                 "ok")
                 }
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+                width: units.gu(2)
+                SlotsLayout.position: SlotsLayout.Leading
+            }
+
+            mainSlot: Label {
+                id: errorLabel
+
+                text: {
+                    if (!addTorrent.rows)
+                        return i18n.tr('Insert the URL of a torrent file')
+                    var args = addTorrent.rows.arguments
+                    return addTorrent.errorString ||
+                            (args && args['torrent-duplicate'] ?
+                                 i18n.tr('Torrent %1 is already in the list').arg(args['torrent-duplicate'].name) :
+                                 i18n.tr('Torrent %1 was successfully added').arg(args['torrent-added'].name))
+                }
                 wrapMode: Text.WordWrap
             }
         }
