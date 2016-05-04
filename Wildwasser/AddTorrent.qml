@@ -23,9 +23,24 @@ Page {
         leadingActionBar {
             actions: [
                 Action {
-                    iconName: "back"
+                    iconName: "close"
                     text: i18n.tr('Cancel')
                     onTriggered: layout.removePages(addPage)
+                }
+            ]
+        }
+        trailingActionBar {
+            actions: [
+                Action {
+                    id: confirmAction
+                    enabled: false
+                    visible: enabled
+                    iconName: "ok"
+                    text: i18n.tr('Confirm')
+                    onTriggered: {
+                        enabled = false
+                        addTorrent.fetch()
+                    }
                 }
             ]
         }
@@ -91,30 +106,19 @@ Page {
         }
 
         SlotsLayout {
+            Label {
+                text: i18n.tr("File")
+                anchors.verticalCenter: urlField.verticalCenter
+                SlotsLayout.position: SlotsLayout.Leading
+                SlotsLayout.overrideVerticalPositioning: true
+            }
+
             mainSlot: TextField {
                 id: urlField
 
                 onTextChanged: confirmAction.enabled = text.indexOf('://') > -1
                 placeholderText: i18n.tr('http://www.example.com/example.torrent')
                 inputMethodHints: Qt.ImhUrlCharactersOnly
-            }
-            AbstractButton {
-                id: confirmAction
-
-                enabled: false
-                visible: enabled
-                height: urlField.height
-                width:  units.gu(2)
-                SlotsLayout.position: SlotsLayout.Last
-                onTriggered: {
-                    enabled = false
-                    addTorrent.fetch()
-                }
-                Icon {
-                    name: "ok"
-                    width: units.gu(2)
-                    anchors.centerIn: parent
-                }
             }
         }
 
