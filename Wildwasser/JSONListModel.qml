@@ -30,7 +30,7 @@ ListModel {
     onJsonChanged: {
         if (!json)
             return
-        url = ''
+        source = ''
         if (autoFetch)
             fetch()
     }
@@ -74,7 +74,6 @@ ListModel {
             if (xhr.readyState == xhr.DONE) {
                 if (xhr.status == 200) {
                     parse(xhr.responseText)
-                    errorString = ''
                 } else {
                     errorString = i18n.tr("Failed to fetch %1 (HTTP %2): %3")
                         .arg(xhr.url).arg(xhr.status).arg(xhr.responseText)
@@ -116,6 +115,7 @@ ListModel {
                 append(item)
         }
         rows = json
+        errorString = ''
         fetched()
     }
 }

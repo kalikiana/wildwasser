@@ -22,6 +22,11 @@ Page {
             Action {
                 iconName: 'list-add'
                 onTriggered: pageLayout.addPageToNextColumn(torrentsPage, Qt.resolvedUrl('AddTorrent.qml'))
+            },
+            Action {
+                // Toggle test data
+                shortcut: 'Ctrl+Shift+T'
+                onTriggered: torrents.json = JSON.stringify(mockTorrentsModel)
             }
         ]
     }
@@ -41,8 +46,103 @@ Page {
         property string server: '127.0.0.1:9091'
     }
 
+    property var mockTorrentsModel: [
+        {
+            "errorString": "No local files found. Check that all volumes are mounted.",
+            "eta": -1,
+            "files": [
+                {
+                    "bytesCompleted": 9813213,
+                    "length": 2801482973,
+                    "name": "My.Favorite.Series.S01E01.720p.HDTV.x264.mkv"
+                }
+            ],
+            "isFinished": false,
+            "name": "My.Favorite.Series.S01E01.720p.HDTV.x264.mkv",
+            "percentDone": 0.0035,
+            "rateDownload": 0,
+            "rateUpload": 0,
+            "totalSize": 2801482973,
+            "wanted": [1]
+        },
+        {
+            "errorString": "",
+            "eta": 634,
+            "files": [
+                {
+                    "bytesCompleted": 168,
+                    "length": 168,
+                    "name": "My.Other.Favorite.Series.S01E01.HDTV.x264-FOO[bar]/READ.ME.PLEASE.KTHXBYE.txt"
+                },
+                {
+                    "bytesCompleted": 41642142,
+                    "length": 359590046,
+                    "name": "My.Other.Favorite.Series.S01E01.HDTV.x264-FOO[bar]/my.other.favorite.series.s01e01.hdtv.x264-foo[bar].mp4"
+                }
+            ],
+            "isFinished": false,
+            "name": "My.Other.Favorite.Series.S01E01.HDTV.x264-FOO[bar]",
+            "percentDone": 0.1158,
+            "rateDownload": 602000,
+            "rateUpload": 2000,
+            "totalSize": 359590214,
+            "wanted": [1, 1]
+        },
+        {
+            "errorString": "",
+            "eta": 3526,
+            "files": [
+                {
+                    "bytesCompleted": 23805952,
+                    "length": 1485881344,
+                    "name": "ubuntu-16.04-desktop-amd64.iso"
+                }
+            ],
+            "isFinished": false,
+            "name": "ubuntu-16.04-desktop-amd64.iso",
+            "percentDone": 0.016,
+            "rateDownload": 437000,
+            "rateUpload": 0,
+            "totalSize": 1485881344,
+            "wanted": [1]
+        },
+        {
+            "errorString": "unregistered torrent",
+            "eta": 1076,
+            "files": [
+                {
+                    "bytesCompleted": 81224738,
+                    "length": 928670754,
+                    "name": "Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com/Big_Buck_Bunny_1080p_surround_FrostWire.com.avi"},
+                {
+                    "bytesCompleted": 5008,
+                    "length": 5008,
+                    "name": "Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com/PROMOTE_YOUR_CONTENT_ON_FROSTWIRE_01_06_09.txt"
+                },
+                {
+                    "bytesCompleted": 572650,
+                    "length": 3456234,
+                    "name": "Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com/Pressrelease_BickBuckBunny_premiere.pdf"
+                },
+                {
+                    "bytesCompleted": 180,
+                    "length": 180,
+                    "name": "Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com/license.txt"
+                }
+            ],
+            "isFinished":false,
+            "name": "Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com",
+            "percentDone": 0.088,
+            "rateDownload": 747000,
+            "rateUpload": 0,
+            "totalSize": 932132176,
+            "wanted": [1,1,0,0]
+        }
+    ]
+
     UbuntuListView {
         id: torrentsList
+        focus: true
 
         anchors {
             top: errorColumn.visible ? errorColumn.bottom : parent.top
