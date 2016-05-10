@@ -199,29 +199,49 @@ Page {
                 return i18n.tr('%1 kB'.arg(Number(fraction / Math.pow(10, 3)).toFixed(1)))
             }
 
-            height: listItemLayout.height + divider.height
-            ListItemLayout {
-                id: listItemLayout
-                title.text: name
-                title.maximumLineCount: 2
-                property string timeLeft: {
-                    if (eta < 0)
-                        return i18n.tr('Unknown')
-                    var date = new Date()
-                    date.setSeconds(eta)
-                    return i18n.relativeDateTime(date)
+            height: column.height + units.gu(1) + divider.height
+
+            Column {
+                id: column
+
+                width: parent.width
+
+                ListItemLayout {
+                    id: listItemLayout
+
+                    title.text: name
+                    property string timeLeft: {
+                        if (eta < 0)
+                            return i18n.tr('Unknown')
+                        var date = new Date()
+                        date.setSeconds(eta)
+                        return i18n.relativeDateTime(date)
+                    }
+                    subtitle.text: errorString ? errorString : i18n.tr('⬇ %1  ⬆ %2  ⏱ %3').arg(size(rateDownload)).arg(size(rateUpload)).arg(timeLeft)
+                    subtitle.color: errorString ? theme.palette.normal.negative : theme.palette.normal.activity
+                    subtitle.maximumLineCount: 10
+                    padding.bottom: units.gu(.5)
+                    padding.top: units.gu(1)
                 }
-                subtitle.text: errorString ? errorString : i18n.tr('⬇ %1 ⬆ %2 ⏱ %3').arg(size(rateDownload)).arg(size(rateUpload)).arg(timeLeft)
-                subtitle.color: errorString ? theme.palette.normal.negative : theme.palette.normal.activity
+
                 ProgressBar {
+                    id: progress
+
                     value: percentDone
-                    width: listItemLayout.width / 3
+                    width: parent.width - units.gu(4)
+                    height: progressLabel.height
+                    anchors {
+                        left: parent.left
+                        leftMargin: units.gu(2)
+                    }
                     visible: !isFinished && !errorString
                     enabled: !errorString
                     showProgressPercentage: false
                     Label {
+                        id: progressLabel
                         anchors.centerIn: parent
                         text: i18n.tr('%1 of %2').arg(size(totalSize * percentDone)).arg(size(totalSize))
+                        textSize: Label.Small
                     }
                 }
             }
